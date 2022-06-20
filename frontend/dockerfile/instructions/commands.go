@@ -224,9 +224,10 @@ func (s *SourcesAndDest) ExpandRaw(expander SingleWordExpander) error {
 type AddCommand struct {
 	withNameAndCode
 	SourcesAndDest
-	Chown string
-	Chmod string
-	Link  bool
+	Chown          string
+	Chmod          string
+	Link           bool
+	PreserveTopDir bool
 }
 
 // Expand variables
@@ -247,10 +248,11 @@ func (c *AddCommand) Expand(expander SingleWordExpander) error {
 type CopyCommand struct {
 	withNameAndCode
 	SourcesAndDest
-	From  string
-	Chown string
-	Chmod string
-	Link  bool
+	From           string
+	Chown          string
+	Chmod          string
+	Link           bool
+	PreserveTopDir bool
 }
 
 // Expand variables

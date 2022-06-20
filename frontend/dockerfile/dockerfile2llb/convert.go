@@ -641,15 +641,16 @@ func dispatch(d *dispatchState, cmd command, opt dispatchOpt) error {
 		err = dispatchWorkdir(d, c, true, &opt)
 	case *instructions.AddCommand:
 		err = dispatchCopy(d, copyConfig{
-			params:       c.SourcesAndDest,
-			source:       opt.buildContext,
-			isAddCommand: true,
-			cmdToPrint:   c,
-			chown:        c.Chown,
-			chmod:        c.Chmod,
-			link:         c.Link,
-			location:     c.Location(),
-			opt:          opt,
+			params:         c.SourcesAndDest,
+			source:         opt.buildContext,
+			isAddCommand:   true,
+			cmdToPrint:     c,
+			chown:          c.Chown,
+			chmod:          c.Chmod,
+			link:           c.Link,
+			preserveTopDir: c.PreserveTopDir,
+			location:       c.Location(),
+			opt:            opt,
 		})
 		if err == nil {
 			for _, src := range c.SourcePaths {
@@ -686,15 +687,16 @@ func dispatch(d *dispatchState, cmd command, opt dispatchOpt) error {
 			l = cmd.sources[0].state
 		}
 		err = dispatchCopy(d, copyConfig{
-			params:       c.SourcesAndDest,
-			source:       l,
-			isAddCommand: false,
-			cmdToPrint:   c,
-			chown:        c.Chown,
-			chmod:        c.Chmod,
-			link:         c.Link,
-			location:     c.Location(),
-			opt:          opt,
+			params:         c.SourcesAndDest,
+			source:         l,
+			isAddCommand:   false,
+			cmdToPrint:     c,
+			chown:          c.Chown,
+			chmod:          c.Chmod,
+			link:           c.Link,
+			preserveTopDir: c.PreserveTopDir,
+			location:       c.Location(),
+			opt:            opt,
 		})
 		if err == nil && len(cmd.sources) == 0 {
 			for _, src := range c.SourcePaths {
@@ -1036,7 +1038,7 @@ func dispatchCopy(d *dispatchState, cfg copyConfig) error {
 			opts := append([]llb.CopyOption{&llb.CopyInfo{
 				Mode:                mode,
 				FollowSymlinks:      true,
-				CopyDirContentsOnly: true,
+				CopyDirContentsOnly: cfg.preserveTopDir == false,
 				AttemptUnpack:       cfg.isAddCommand,
 				CreateDestPath:      true,
 				AllowWildcard:       true,
@@ -1118,15 +1120,16 @@ func dispatchCopy(d *dispatchState, cfg copyConfig) error {
 }
 
 type copyConfig struct {
-	params       instructions.SourcesAndDest
-	source       llb.State
-	isAddCommand bool
-	cmdToPrint   fmt.Stringer
-	chown        string
-	chmod        string
-	link         bool
-	location     []parser.Range
-	opt          dispatchOpt
+	params         instructions.SourcesAndDest
+	source         llb.State
+	isAddCommand   bool
+	cmdToPrint     fmt.Stringer
+	chown          string
+	chmod          string
+	link           bool
+	preserveTopDir bool
+	location       []parser.Range
+	opt            dispatchOpt
 }
 
 func dispatchMaintainer(d *dispatchState, c *instructions.MaintainerCommand) error {
