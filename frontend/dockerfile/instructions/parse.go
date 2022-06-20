@@ -282,6 +282,7 @@ func parseAdd(req parseRequest) (*AddCommand, error) {
 	flChmod := req.flags.AddString("chmod", "")
 	flLink := req.flags.AddBool("link", false)
 	flPreserveTopDir := req.flags.AddBool("preserve-top-dir", false)
+	flSplitSources := req.flags.AddBool("split-sources", false)
 	if err := req.flags.Parse(); err != nil {
 		return nil, err
 	}
@@ -298,6 +299,7 @@ func parseAdd(req parseRequest) (*AddCommand, error) {
 		Chmod:           flChmod.Value,
 		Link:            flLink.Value == "true",
 		PreserveTopDir:  flPreserveTopDir.Value == "true",
+		SplitSources:    flSplitSources.Value == "true",
 	}, nil
 }
 
@@ -310,6 +312,7 @@ func parseCopy(req parseRequest) (*CopyCommand, error) {
 	flChmod := req.flags.AddString("chmod", "")
 	flLink := req.flags.AddBool("link", false)
 	flPreserveTopDir := req.flags.AddBool("preserve-top-dir", false)
+	flSplitSources := req.flags.AddBool("split-sources", false)
 	if err := req.flags.Parse(); err != nil {
 		return nil, err
 	}
@@ -327,6 +330,7 @@ func parseCopy(req parseRequest) (*CopyCommand, error) {
 		Chmod:           flChmod.Value,
 		Link:            flLink.Value == "true",
 		PreserveTopDir:  flPreserveTopDir.Value == "true",
+		SplitSources:    flSplitSources.Value == "true",
 	}, nil
 }
 

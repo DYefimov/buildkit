@@ -186,10 +186,18 @@ type SourcesAndDest struct {
 	SourceContents []SourceContent
 }
 
-func (s *SourcesAndDest) Expand(expander SingleWordExpander) error {
+func (s *SourcesAndDest) Expand(expander SingleWordExpander, splitSources bool) error {
 	err := expandSliceInPlace(s.SourcePaths, expander)
 	if err != nil {
 		return err
+	}
+
+	if splitSources {
+		var SourcePathsSplitted []string
+		for _, src := range s.SourcePaths {
+			SourcePathsSplitted = append(SourcePathsSplitted, strings.Fields(src)...)
+		}
+		s.SourcePaths = SourcePathsSplitted
 	}
 
 	expandedDestPath, err := expander(s.DestPath)
@@ -228,6 +236,7 @@ type AddCommand struct {
 	Chmod          string
 	Link           bool
 	PreserveTopDir bool
+	SplitSources   bool
 }
 
 // Expand variables
@@ -238,7 +247,7 @@ func (c *AddCommand) Expand(expander SingleWordExpander) error {
 	}
 	c.Chown = expandedChown
 
-	return c.SourcesAndDest.Expand(expander)
+	return c.SourcesAndDest.Expand(expander, c.SplitSources)
 }
 
 // CopyCommand : COPY foo /path
@@ -253,6 +262,7 @@ type CopyCommand struct {
 	Chmod          string
 	Link           bool
 	PreserveTopDir bool
+	SplitSources   bool
 }
 
 // Expand variables
@@ -263,7 +273,7 @@ func (c *CopyCommand) Expand(expander SingleWordExpander) error {
 	}
 	c.Chown = expandedChown
 
-	return c.SourcesAndDest.Expand(expander)
+	return c.SourcesAndDest.Expand(expander, c.SplitSources)
 }
 
 // OnbuildCommand : ONBUILD <some other command>
