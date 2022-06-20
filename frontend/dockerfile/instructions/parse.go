@@ -281,6 +281,7 @@ func parseAdd(req parseRequest) (*AddCommand, error) {
 	flChown := req.flags.AddString("chown", "")
 	flChmod := req.flags.AddString("chmod", "")
 	flLink := req.flags.AddBool("link", false)
+	flPreserveTopDir := req.flags.AddBool("preserve-top-dir", false)
 	if err := req.flags.Parse(); err != nil {
 		return nil, err
 	}
@@ -296,6 +297,7 @@ func parseAdd(req parseRequest) (*AddCommand, error) {
 		Chown:           flChown.Value,
 		Chmod:           flChmod.Value,
 		Link:            flLink.Value == "true",
+		PreserveTopDir:  flPreserveTopDir.Value == "true",
 	}, nil
 }
 
@@ -307,6 +309,7 @@ func parseCopy(req parseRequest) (*CopyCommand, error) {
 	flFrom := req.flags.AddString("from", "")
 	flChmod := req.flags.AddString("chmod", "")
 	flLink := req.flags.AddBool("link", false)
+	flPreserveTopDir := req.flags.AddBool("preserve-top-dir", false)
 	if err := req.flags.Parse(); err != nil {
 		return nil, err
 	}
@@ -323,6 +326,7 @@ func parseCopy(req parseRequest) (*CopyCommand, error) {
 		Chown:           flChown.Value,
 		Chmod:           flChmod.Value,
 		Link:            flLink.Value == "true",
+		PreserveTopDir:  flPreserveTopDir.Value == "true",
 	}, nil
 }
 
